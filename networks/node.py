@@ -10,6 +10,9 @@ class Node:
     def connect(self, node):
         self.connections.append(node)  # Append to the list
         node.connections.append(self)
+    def disconnect(self, node):
+        self.connections.remove(node)
+        node.connections.remove(self)
 
     def k(self):
         return len(self.connections)  # Degree of the node

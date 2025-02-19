@@ -1,0 +1,52 @@
+import matplotlib.pyplot as plt
+import importlib
+import networks.network  # Ensure the submodule is directly importable
+import numpy as np
+from networks import WattsStrogatzNetwork, BaNetwork
+
+def build_legend(plt):
+    params_str = '\n'.join([f"{key}: {value}" for key, value in parameters.items()])
+    plt.legend(
+        title="Parametri",
+        title_fontsize=13,
+        fontsize=11,
+        loc="upper right",
+        frameon=True,
+        edgecolor="black",
+        facecolor="white",
+        framealpha=0.8,
+        shadow=True,
+        labels=[params_str]  # Inserisce tutti i parametri come unica etichetta
+    )
+
+parameters = {
+    #'m0': 2,
+    #'m': 2,
+    'n_nodes':30000,
+    'interest':0.1/12., # interesse 10% annuo
+    'ponzi_capital':5000,
+    'lambda_':0.10 / 12.,
+    'mu': 0.10 / 12.,
+    'interest_calculating_periods':1
+}
+
+net1 = WattsStrogatzNetwork.load_json('my_networks/ws1.json')
+net2 = BaNetwork.load_json('my_networks/ba1.json')
+list = {'ws1': net1, 'ws2': net2}
+
+
+for (name, net) in list.items():
+    ponzi_capital, investor, potential, deinvestor, degrees_money = net.simulate_ponzi(12*30)
+    fig, ax1 = plt.subplots(figsize=(8, 5))
+    ax2 = ax1.twinx()
+
+    # trasformiamo in anni
+    #x_vals = np.arange(start=0, stop=len(ponzi_capital)/12., step=1./12)
+    x_vals = np.arange(len(ponzi_capital)) / 12.
+    ax2.plot(x_vals, np.array(ponzi_capital), label='Capitale di Ponzi (rateo su capitale iniziale)', color='red')
+    ax1.plot(x_vals, investor, label='Investors')
+    ax1.plot(x_vals, potential, label='Potential')
+    ax1.plot(x_vals, deinvestor, label='Deinvestors')
+    build_legend(plt)
+    plt.savefig(f'imgs/{name}.png')
+    plt.show()
