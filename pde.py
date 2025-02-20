@@ -18,8 +18,6 @@ intervals = 1000
 
 av_k = 5
 
-ol
-
 def inte2(t_):
     return mu(t_)
 

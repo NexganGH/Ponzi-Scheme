@@ -5,9 +5,9 @@ from networks import BaNetwork
 
 
 parameters = {
-    'm0': 2,
-    'm': 2,
-    'n_nodes':50000,
+    'm0': 5,
+    'm': 3,
+    'n_nodes': 2000,
     'interest':0.1/12., # interesse 10% annuo
     'ponzi_capital':5000,
     'lambda_':0.025,
@@ -28,4 +28,4 @@ net = BaNetwork(
 k_dist = net.k_distribution()
 plt.hist(k_dist[k_dist < 20], range=(0, 20.), )
 
-net.save_json('my_networks/ba2.json')
+net.save_json('my_networks/ba3.json')
