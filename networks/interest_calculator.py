@@ -17,7 +17,7 @@ class InterestCalculator:
         :param t2:
         :return:
         """
-        return starting * np.exp(quad(self.r_p, t1, t2)[0])
+        return starting * np.exp(quad(self.r_p, t1, t2, limit=30)[0])
        # sol = solve_ivp(self.func2, (t1, t2), [starting], t_eval=[t2])
         # val = starting * np.e ** quad(lambda t: self.r_r(t), t1, t2)[0]
         #print(f'realized returned: from t_1 {t1} to t_2 {t2}: {sol.y[0][-1]}')
@@ -28,7 +28,10 @@ class InterestCalculator:
         #print(g)
         return [self.r_r(t) * g[0]]
     def realized_return(self, starting, t1, t2):
+        #return starting * (self.r_r(t2) + 1)
         #print(f'calc return from {t1} to {t2}, with interest: {self.r_r(t1)}, res:', starting, ' to ', starting * np.exp(quad(self.r_r, t1, t2)[0]))
-        return starting * np.exp( quad(self.r_r, t1, t2)[0])
-        #return starting * np.exp(quad(self.r_r, t1, t2, limit=30)[0])
+        #return starting * np.exp(self.r_r(t2) * (t2 - t1))
+        #return starting * np.exp( quad(lambda t: self.r_r(t2), t1, t2)[0])
+        return starting * np.exp(quad(self.r_r, t1, t2, limit=30)[0])
         #return starting*np.e**(self.r_r(t2)*(t2 - t1))#starting + starting*self.r_r(t2)*(t2-t1)
+        #return starting + starting * self.r_r(t2) * (t2 - t1)

@@ -124,8 +124,8 @@ for (name, net) in list.items():
         #print('calculated ', x_vals[i], made_interest[i])
     print('ending with investors', investor[-1])
     #print(x_vals, made_interest)
-    ax2.plot(x_vals, made_interest)
-
+    #ax2.plot(x_vals, [interest_calculator.realized_return() for i in range(len(x_vals))])
+    ax2.plot(x_vals, made_interest, color='black')
     build_legend(plt)
     plt.savefig(f'imgs/{name}.png')
     plt.show()

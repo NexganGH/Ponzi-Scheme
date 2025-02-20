@@ -87,7 +87,6 @@ class PonziSimulation:
                     exit_capital = self.interest_calculator.promised_return_at_time(self.capital_per_person,
                                                                                node.time_joined * self.dt,
                                                                                time * self.dt)  # self.capital_per_person
-                    print(f'joined at {node.time_joined * self.dt}, left at {time*self.dt} with {exit_capital}')
                     self.network.capital_array[i] += exit_capital
                     ponzi.capital -= exit_capital
                     node.status = NodeStatus.DEINVESTOR

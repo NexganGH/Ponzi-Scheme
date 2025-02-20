@@ -97,6 +97,7 @@ class Network:
     @staticmethod
     def load_json(filename="network.json"):
         """Carica il network da un file JSON e lo ricostruisce."""
+        """Carica il network da un file JSON e lo ricostruisce."""
         with open(filename, "r") as f:
             data = json.load(f)
 

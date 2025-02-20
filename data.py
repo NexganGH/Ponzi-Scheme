@@ -30,23 +30,22 @@ class Data:
         print(dict(list(self.returns_dict.items())[:5]))
 
     # Funzione per interpolare i ritorni in base al tempo t (in anni)
-    def interpolated_r_r(self, t): # t in years
-        #return 0.08
-        #return np.interp(t + 1./12, self.sp500['Years Since 1990'], self.sp500['Monthly Return'])
-        #print('before', t)
-        #t = int(np.ceil(t * 12))  # Convert years to months
-        #print('after', t)
-        #idx = np.abs(self.months_array - t).argmin()  # Find closest index
-        #print('months array is', self.months_array)
-        #print('index is ', idx)
-        #return self.returns_array[idx]
+    # def interpolated_r_r(self, t): # t in years
+    #     keys_array = np.array(list(self.returns_dict.keys()))  # Converte le chiavi in array NumPy
+    #     idx = np.abs(keys_array - t).argmin()  # Trova l'indice della chiave più vicina
+    #     closest_key = keys_array[min(idx+1, len(keys_array) - 1)]  # Ottieni la chiave effettiva
+    #     if t == 0:
+    #         closest_key = keys_array[0]
+    #     return self.returns_dict[closest_key]  # Restituisce il valore corrispondente
 
-        #t is in years
+    def interpolated_r_r(self, t):  # t in years
         keys_array = np.array(list(self.returns_dict.keys()))  # Converte le chiavi in array NumPy
         idx = np.abs(keys_array - t).argmin()  # Trova l'indice della chiave più vicina
-        closest_key = keys_array[min(idx+1, len(keys_array) - 1)]  # Ottieni la chiave effettiva
+        closest_key = keys_array[min(idx + 1, len(keys_array) - 1)]  # Ottieni la chiave effettiva
+
         if t == 0:
             closest_key = keys_array[0]
-        #if t > closest_key:
-         #   closest_key = keys_array[idx+1]
-        return self.returns_dict[closest_key]  # Restituisce il valore corrispondente
+
+        discrete_return = self.returns_dict[closest_key]
+        continuous_return = np.log(1 + discrete_return)  # Conversione in tasso continuo
+        return continuous_return
