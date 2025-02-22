@@ -10,8 +10,8 @@ class PonziSimulation:
                  interest_calculator: InterestCalculator,
                  max_time_units: int = 10000,
                  dt: float = 1. / 12,
-                 lambda_ = lambda t: 0.1,
-                 mu = lambda t: 0.1,
+                 lambda_ = lambda t: 0.05,
+                 mu = lambda t: 0.025,
                  capital_per_person: float = 100, ponzi_capital: float = 100) -> None:
         self.network = network
         self.interest_calculator = interest_calculator
@@ -54,7 +54,7 @@ class PonziSimulation:
         self._update_counts(investor_numbers, potential_numbers, deinvestor_numbers, degrees_money, time)
 
         last_signal, signal_every = 0, 0.05
-        while time < self.max_time_units and ponzi.capital / self.ponzi_capital >= -10:
+        while time < self.max_time_units and ponzi.capital / self.ponzi_capital >= -10 and (investor_numbers[-1] > 1 or time < 12*10):
             perc = time / self.max_time_units
             if perc >= last_signal + signal_every:
                 print(f'{perc * 100:.2f}% complete')
@@ -64,6 +64,7 @@ class PonziSimulation:
                 ponzi.capital = self.interest_calculator.realized_return(ponzi.capital,
                                                                     (time - 1) * self.dt,
                                                                     time * self.dt)
+                #print('updated ponzi capital from ', ponzi_capital[-1], 'to ', ponzi.capital)
             for i in range(1, len(nodes)):  # Skip the Ponzi node
                 self.evolve_node(i, nodes[i], time)
 
@@ -83,16 +84,16 @@ class PonziSimulation:
                 #   self.capital_array[i] += interest
                 #  ponzi.capital -= interest
 
-                if np.random.binomial(1, self.mu(time)):  # Node exits
+                if np.random.binomial(1, self.mu(time*self.dt)*self.dt):  # Node exits
                     exit_capital = self.interest_calculator.promised_return_at_time(self.capital_per_person,
-                                                                               node.time_joined * self.dt,
+                                                                                    node.time_joined * self.dt,
                                                                                time * self.dt)  # self.capital_per_person
                     self.network.capital_array[i] += exit_capital
                     ponzi.capital -= exit_capital
                     node.status = NodeStatus.DEINVESTOR
             elif node.status == NodeStatus.POTENTIAL:
                 for connection in node.connections:
-                    if connection.status == NodeStatus.INVESTOR and np.random.binomial(1, self.lambda_(time)):
+                    if connection.status == NodeStatus.INVESTOR and np.random.binomial(1, self.lambda_(time*self.dt)*self.dt):
                         invest_capital = self.capital_per_person
                         self.network.capital_array[i] -= invest_capital
                         ponzi.capital += invest_capital

@@ -32,11 +32,11 @@ parameters = {
     'lambda_': 0.05/12.,
     'mu': 0.1/12.,
     'interest_calculating_periods':12,
-    'capital_per_person': 100
+    'capital_per_person': 0
 }
 
 net1 = WattsStrogatzNetwork.load_json('my_networks/ws1.json')
-net2 = BaNetwork.load_json('my_networks/ba2.json')
+net2 = BaNetwork.load_json('my_networks/ba1.json')
 list = {'ba1': net2} # 'ws1': net1,
 
 data = Data()
@@ -53,10 +53,11 @@ for (name, net) in list.items():
         interest_calculator = interest_calculator,
         max_time_units = 30 * 12,
         dt = 1. / 12,
-        lambda_ = lambda t: 0.1,
-        mu = lambda t: 0.1,
-        capital_per_person = 100,
-        ponzi_capital = 5000
+        lambda_ = lambda t: 0.05,
+        mu = lambda t: 0.05,
+        capital_per_person = 0,
+        ponzi_capital = 100
+
     )
 
 
@@ -117,7 +118,7 @@ for (name, net) in list.items():
     ax1.plot(x_vals, deinvestor, label='Deinvestors')
 
 
-    made_interest = [5000]
+    made_interest = [ponzi_simulation.ponzi_capital]
     for i in range(1, len(x_vals)):
         #print('will calculated', made_interest[i-1], x_vals[i-1], x_vals[i])
         made_interest.append(interest_calculator.realized_return(made_interest[i-1], x_vals[i-1], x_vals[i]))
