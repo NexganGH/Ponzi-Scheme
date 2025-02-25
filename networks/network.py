@@ -9,10 +9,8 @@ import json
 
 class Network:
 
-    def __init__(self, n_nodes, capital_per_person=100, ponzi_capital=100, lambda_=0.1, mu=0.1, interest=0.1,
+    def __init__(self, n_nodes, capital_per_person=100, ponzi_capital=100, interest=0.1,
                  interest_calculating_periods=30):
-        self.mu = mu
-        self.lambda_ = lambda_
         self.ponzi_capital = ponzi_capital
         self.capital_per_person = capital_per_person
         self.interest = interest
@@ -24,25 +22,13 @@ class Network:
         self.interest_calculating_periods = interest_calculating_periods
         self.capital_array = None  # Numpy array for fast capital tracking
 
-    def set_parameters(self, parameters):
-        self.mu = parameters['mu']
-        self.lambda_ = parameters['lambda_']
-        self.interest = parameters['interest']
-        self.capital_per_person = parameters['capital_per_person']
-        #self.m0 = parameters['m0']
-        #self.n_nodes = parameters['n_nodes']
-        self.interest_calculating_periods = parameters['interest_calculating_periods']
+    #def set_parameters(self, parameters):
+  #      self.interest_calculating_periods = parameters['interest_calculating_periods']
 
     @abstractmethod
     def build(self):
         """Metodo da implementare nelle sottoclassi per costruire il network."""
         pass
-
-
-
-
-    def _money_per_turn(self):
-        return self.interest * self.capital_per_person
 
     def ponzi_node(self) -> Node:
         if len(self.nodes) == 0:
@@ -51,6 +37,10 @@ class Network:
 
     def k_distribution(self):
         return np.array([node.k() for node in self.nodes], dtype=int)
+
+    def print_k_info(self):
+        k_dist = self.k_distribution()
+        return f'Mean: {np.mean(k_dist)}, k^2: {np.mean(np.square(k_dist))}'
 
     def save_json(self, filename="network.json"):
         """Salva il network in un file JSON."""
@@ -70,8 +60,6 @@ class Network:
                 "n_nodes": self.n_nodes,
                 "capital_per_person": self.capital_per_person,
                 "ponzi_capital": self.ponzi_capital,
-                "lambda_": self.lambda_,
-                "mu": self.mu,
                 "interest": self.interest,
                 "interest_calculating_periods": self.interest_calculating_periods,
             },
@@ -86,17 +74,15 @@ class Network:
 
     @abstractmethod
     def get_model_params(self):
-        print('not implemented')
-        pass
+        raise Exception('Not implemented')
+        #pass
 
     @abstractmethod
     def set_model_params(self, params):
-        print('not impleemented')
-        pass
+        raise Exception('Not implemented')
 
     @staticmethod
     def load_json(filename="network.json"):
-        """Carica il network da un file JSON e lo ricostruisce."""
         """Carica il network da un file JSON e lo ricostruisce."""
         with open(filename, "r") as f:
             data = json.load(f)

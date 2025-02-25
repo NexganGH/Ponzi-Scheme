@@ -16,6 +16,7 @@ class DifferentialEquations:
         self.mu = mu
         self.rr = rr
         self.rp = rp
+        self.t_span, self.t_eval = None, None
 
     def system(self, t, y):
         i, p, d = y
@@ -75,6 +76,7 @@ class DifferentialEquations:
         # # Plot primary variables on the left y-axis
         ax1.plot(t, self.i(t), label='Investitori (i)', color='blue')
         ax1.plot(t, self.p(t), label='Potenziali Investitori (p)', color='green')
+        ax1.plot(t, self.d(t), label='Deinvestitori (d)', color='gray')
         # ax1.plot(t, d(t), label='Deinvestitori (d)', color='red')
 
         ax1.set_xlabel('Tempo (anni)')
@@ -86,11 +88,9 @@ class DifferentialEquations:
         ax2 = ax1.twinx()
         #ax2.plot(t, [self._W(ti) for ti in t], label='Withdrawal', color='purple', linestyle='dashed')
         #ax2.plot(t, [av_W(ti) for ti in t], label='Average Withdrawal Value', color='red', linestyle='dashed')
-        ax2.plot(t, self.sol_S.y[0], label='Money', color='green', linestyle='dashed')
+        ax2.plot(t, self.sol_S.y[0], label='Money', color='red', linestyle='dashed')
         ax2.set_ylabel('Money')
         ax2.legend(loc='upper right')
-
-        # ax2.plot(t, [g(0, ti) for ti in t])
 
         # Title
         plt.title('Evoluzione del Sistema nel Tempo')

@@ -1,6 +1,4 @@
 import matplotlib.pyplot as plt
-import importlib
-import networks.network  # Ensure the submodule is directly importable
 import numpy as np
 from networks import Network, WattsStrogatzNetwork, BaNetwork
 from networks.interest_calculator import InterestCalculator
@@ -53,9 +51,9 @@ for (name, net) in list.items():
         interest_calculator = interest_calculator,
         max_time_units = 30 * 12,
         dt = 1. / 12,
-        lambda_ = lambda t: 0.05,
-        mu = lambda t: 0.05,
-        capital_per_person = 0,
+        lambda_ = lambda t: 0.1,
+        mu = lambda t: 0.1,
+        capital_per_person = 100,
         ponzi_capital = 100
 
     )

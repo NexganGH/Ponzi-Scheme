@@ -2,6 +2,7 @@ from networks.interest_calculator import InterestCalculator
 import numpy as np
 from networks import Network, Node
 from networks.node_status import NodeStatus
+import matplotlib.pyplot as plt
 
 
 class PonziSimulation:
@@ -73,6 +74,10 @@ class PonziSimulation:
             self._update_counts(investor_numbers, potential_numbers, deinvestor_numbers, degrees_money, time)
             time += 1
 
+        self.ponzi_capital = ponzi_capital
+        self.investor_numbers = investor_numbers
+        self.potential_numbers = potential_numbers
+        self.deinvestor_numbers = deinvestor_numbers
         return [ponzi_capital, investor_numbers, potential_numbers, deinvestor_numbers, degrees_money]
 
     def evolve_node(self, i: int, node: Node, time: float):
@@ -98,3 +103,37 @@ class PonziSimulation:
                         self.network.capital_array[i] -= invest_capital
                         ponzi.capital += invest_capital
                         node.make_investor(connection, time)
+
+    def graph(self, name, show_potential=True):
+        fig, ax1 = plt.subplots(figsize=(10, 6))
+
+        t = np.arange(len(self.ponzi_capital))/12.
+        # # Plot primary variables on the left y-axis
+        ax1.plot(t, self.investor_numbers, label='Investitori (i)', color='blue')
+
+        if show_potential:
+            ax1.plot(t, self.potential_numbers, label='Potenziali Investitori (p)', color='green')
+        ax1.plot(t, self.deinvestor_numbers, label='Deinvestitori (d)', color='gray')
+        # ax1.plot(t, d(t), label='Deinvestitori (d)', color='red')
+
+        ax1.set_xlabel('Tempo (anni)')
+        ax1.set_ylabel('Popolazione')
+        ax1.legend(loc='upper left')
+        ax1.grid()
+
+        # Create secondary y-axis
+        ax2 = ax1.twinx()
+        # ax2.plot(t, [self._W(ti) for ti in t], label='Withdrawal', color='purple', linestyle='dashed')
+        # ax2.plot(t, [av_W(ti) for ti in t], label='Average Withdrawal Value', color='red', linestyle='dashed')
+        ax2.plot(t, self.ponzi_capital, label='Money', color='red', linestyle='dashed')
+        ax2.set_ylabel('Money')
+        ax2.legend(loc='upper right')
+
+        # ax2.plot(t, [g(0, ti) for ti in t])
+
+        # Title
+        plt.title('Evoluzione del Sistema nel Tempo')
+
+        plt.savefig(f'imgs/{name}.png')
+        plt.show()
+

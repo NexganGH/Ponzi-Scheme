@@ -109999,8 +109999,6 @@
         "n_nodes": 10000,
         "capital_per_person": 100,
         "ponzi_capital": 5000,
-        "lambda_": 0.025,
-        "mu": 0.015,
         "interest": 0.008333333333333333,
         "interest_calculating_periods": 1
     },
