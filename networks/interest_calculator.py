@@ -64,10 +64,11 @@ class InterestCalculator:
 
 
     def mu_from_market_positivity(self, market_pos, base=0.1, min=0.05, max=0.3, steepness=5):
-        return (max - min) / (1 + np.exp(-steepness * (-market_pos)))
-
+        #return min + (max - min) / (1 + np.exp(-steepness * (-market_pos)))
+        c = -1/steepness * np.log((max-base)/(base-min))
+        return min + (max-min)/(1+np.exp(steepness*(market_pos - c)))
     def lambda_from_market_positivity(self, market_pos, base=0.1, min=0.05, max=0.3, steepness=5):
-        return (max - min) / (1 + np.exp(-steepness * market_pos))
+        return min + (max - min) / (1 + np.exp(-steepness * market_pos))
 
 
     def mu_from_rr_func(self, base=0.1, min=0.05, max=0.2, steepness=3):

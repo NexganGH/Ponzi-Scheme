@@ -55,14 +55,14 @@ def g(tau, t):
 
 N = 1000
 
-def joined_at_time(tau):
-    return lambda_(tau) * av_k * p(tau) * i(tau)
+def joined_at_time_and_hasnt_left(tau, t):
+    return lambda_(tau) * av_k * p(tau) * i(tau) * np.exp(-1 * quad(lambda ti: mu(ti), tau, t)[0])
 
 def W(t):
     if t == 0: return 0
     else:
-        return (N * mu(t) * i(t) * quad(lambda tau: joined_at_time(tau) * g(tau, t) , 0, t)[0]
-            / quad(lambda tau: joined_at_time(tau), 0, t)[0])
+        return (N * mu(t) * i(t) * quad(lambda tau: joined_at_time_and_hasnt_left(tau, t) * g(tau, t) , 0, t)[0]
+            / quad(lambda tau: joined_at_time_and_hasnt_left(tau, t), 0, t)[0])
 
 def av_W(t):
     return W(t) / (N * mu(t) * i(t))

@@ -27,7 +27,6 @@ class Data:
         self.returns_dict = dict(zip(self.sp500['Years Since 1990'], self.sp500['Monthly Return']))
 
         # Stampa i primi 5 valori per verificare
-        print(dict(list(self.returns_dict.items())[:5]))
 
     # Funzione per interpolare i ritorni in base al tempo t (in anni)
     # def interpolated_r_r(self, t): # t in years
