@@ -17,7 +17,7 @@ class WattsStrogatzNetwork(Network):
     def __init__(self, n_nodes, k, p, capital_per_person=100, ponzi_capital=100, lambda_=0.1, mu=0.1, interest=0.1,
                  interest_calculating_periods=30):
         super().__init__(n_nodes=n_nodes, capital_per_person=capital_per_person,
-                         ponzi_capital=ponzi_capital, lambda_=lambda_, mu=mu, interest=interest,
+                         ponzi_capital=ponzi_capital, interest=interest,
                          interest_calculating_periods=interest_calculating_periods)
         self.k = k  # Ogni nodo inizialmente connesso ai k vicini più prossimi
         self.p = p  # Probabilità di riconnessione

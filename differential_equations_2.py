@@ -24,6 +24,7 @@ class DifferentialEquations2:
 
         lambda__ = self.lambda_(t)
         mu_ = self.mu(t)
+
         di_dt = lambda__ * p * self.avg_k * i - mu_ * i
         dp_dt = -lambda__ * p * self.avg_k * i
         dd_dt = mu_ * i
@@ -44,7 +45,7 @@ class DifferentialEquations2:
         self.t_span = (t_start, t_end)
         self.t_eval = np.linspace(t_start, t_end, intervals)
 
-        sol = solve_ivp(self.system, self.t_span, [1/self.N, 1, 0, self.ponzi_capital, 0, 0], t_eval=self.t_eval, rtol=1e-8,  atol=1e-10, max_step=0.01)
+        sol = solve_ivp(self.system, self.t_span, [1/self.N, 1-1/self.N, 0, self.ponzi_capital, 0, 0], t_eval=self.t_eval, rtol=1e-8,  atol=1e-10, max_step=0.01)
         self.t = sol.t
         i_val = sol.y[0]
         p_val = sol.y[1]
