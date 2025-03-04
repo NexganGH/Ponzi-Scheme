@@ -34,10 +34,10 @@ ax2 = ax1.twinx()
 
 # Grafico del prezzo di chiusura dell'S&P 500 (blu)
 #ax2.plot(x_vals, data.sp500['Close'][:len(x_vals)], label="S&P 500 Close", color='tab:blue', linestyle='dashed')
-ax2.plot(x_vals, [100] + [interest_calculator.promised_return_at_time(100, x_vals[0], x_vals[i]) for i in range(1, len(x_vals))], label="someone", color='black', linestyle='dashed')
+ax2.plot(x_vals, [5000] + [interest_calculator.promised_return_at_time(5000, x_vals[0], x_vals[i]) for i in range(1, len(x_vals))], label="someone", color='black', linestyle='dashed')
 
 # Calcolo dell'investimento nel tempo
-made_interest = [100]
+made_interest = [5000]
 for i in range(1, len(x_vals)):
     #val = made_interest[i-1]
     #made_interest.append(val + val * data.returns_array[i])

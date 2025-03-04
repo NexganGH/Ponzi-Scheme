@@ -62,12 +62,18 @@ class PonziSimulation:
                 last_signal = perc
 
             if time > 0:
-                ponzi.capital = self.interest_calculator.realized_return(ponzi.capital,
+                new_capital = self.interest_calculator.realized_return(ponzi.capital,
                                                                     (time - 1) * self.dt,
                                                                     time * self.dt)
+                #print('updating ponzi capital from ', ponzi.capital, ' to ', new_capital)
+                ponzi.capital = new_capital
                 #print('updated ponzi capital from ', ponzi_capital[-1], 'to ', ponzi.capital)
+            statuses = np.array([node.status for node in nodes])
+            print('before evolution, investors are ', np.sum(statuses == NodeStatus.INVESTOR))
             for i in range(1, len(nodes)):  # Skip the Ponzi node
                 self.evolve_node(i, nodes[i], time)
+            statuses = np.array([node.status for node in nodes])
+            print('after evolution, investors are ', np.sum(statuses == NodeStatus.INVESTOR))
 
             # Update logs
             ponzi_capital.append(ponzi.capital)
@@ -93,6 +99,7 @@ class PonziSimulation:
                     exit_capital = self.interest_calculator.promised_return_at_time(self.capital_per_person,
                                                                                     node.time_joined * self.dt,
                                                                                time * self.dt)  # self.capital_per_person
+                    #print('Entered at ', node.time_joined, ', exited at', time, ' with money ', exit_capital)
                     self.network.capital_array[i] += exit_capital
                     ponzi.capital -= exit_capital
                     node.status = NodeStatus.DEINVESTOR
@@ -101,8 +108,11 @@ class PonziSimulation:
                     if connection.status == NodeStatus.INVESTOR and np.random.binomial(1, self.lambda_(time*self.dt)*self.dt):
                         invest_capital = self.capital_per_person
                         self.network.capital_array[i] -= invest_capital
+                      #  print('ponzi capital from ', ponzi.capital)
                         ponzi.capital += invest_capital
+                        #print('ponzi capital updated to', ponzi.capital)
                         node.make_investor(connection, time)
+                        break # Altrimenti potrebbe diventare investitore due volte.
 
     def graph(self, name, show_potential=True):
         fig, ax1 = plt.subplots(figsize=(10, 6))
