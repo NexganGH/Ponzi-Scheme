@@ -2,24 +2,20 @@ from abc import abstractmethod
 
 import numpy as np
 
-from .interest_calculator import InterestCalculator
 from .node import Node
 from .node_status import NodeStatus
 import json
 
 class Network:
 
-    def __init__(self, n_nodes, capital_per_person=100, ponzi_capital=100, interest=0.1,
-                 interest_calculating_periods=30):
+    def __init__(self, n_nodes, capital_per_person=100, ponzi_capital=100):
         self.ponzi_capital = ponzi_capital
         self.capital_per_person = capital_per_person
-        self.interest = interest
         #self.m0 = m0
         #self.m = m
         self.n_nodes = n_nodes
         self.nodes = []
         self.current_size = 0
-        self.interest_calculating_periods = interest_calculating_periods
         self.capital_array = None  # Numpy array for fast capital tracking
 
     #def set_parameters(self, parameters):
@@ -60,8 +56,6 @@ class Network:
                 "n_nodes": self.n_nodes,
                 "capital_per_person": self.capital_per_person,
                 "ponzi_capital": self.ponzi_capital,
-                "interest": self.interest,
-                "interest_calculating_periods": self.interest_calculating_periods,
             },
             "model_params": self.get_model_params()
         }

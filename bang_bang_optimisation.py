@@ -1,14 +1,14 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.integrate import solve_ivp, quad
+from scipy.integrate import solve_ivp
 from scipy.optimize import minimize
-from data import Data
-from networks.interest_calculator import InterestCalculator
+from simulation.finance_data import FinanceData
+from simulation.parameters_calculator import InterestCalculator
 
-data = Data()
+data = FinanceData()
 data.download()
 
-interest_calculator = InterestCalculator(r_p=lambda _: 0.1, r_r=data.interpolated_r_r)
+interest_calculator = InterestCalculator(rp=lambda _: 0.1, rr=data.interpolated_r_r)
 interest_calculator.compute_market_positivity(0, 30, 200)
 
 

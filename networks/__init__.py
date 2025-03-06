@@ -3,3 +3,4 @@ from .node import Node
 
 from .ws_network import WattsStrogatzNetwork
 from .ba_network import BaNetwork
+from .er_network import ErNetwork

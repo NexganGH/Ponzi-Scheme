@@ -12,11 +12,12 @@ class BaNetwork(Network):
     def get_model_params(self):
         return {'m': self.m, 'm0': self.m0}
 
-    def __init__(self, m0, m, n_nodes, capital_per_person=100, ponzi_capital=100, lambda_=0.1, mu=0.1, interest=0.1,
-                 interest_calculating_periods=30):
-        super().__init__(n_nodes=n_nodes, capital_per_person=capital_per_person,
-                         ponzi_capital=ponzi_capital, lambda_=lambda_, mu=mu, interest=interest,
-                         interest_calculating_periods=interest_calculating_periods)
+    @staticmethod
+    def from_average_k(k, n_nodes):
+        return BaNetwork(int(k/2), int(k/2), n_nodes)
+    def __init__(self, m, m0, n_nodes):
+        super().__init__(n_nodes=n_nodes)#, interest=interest,
+                         #interest_calculating_periods=interest_calculating_periods)
         self.m0 = m0
         self.m = m
 

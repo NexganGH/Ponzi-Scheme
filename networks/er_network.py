@@ -14,8 +14,7 @@ class ErNetwork(Network):
     def __init__(self, n_nodes, k_avg, capital_per_person=100, ponzi_capital=100, lambda_=0.1, mu=0.1, interest=0.1,
                  interest_calculating_periods=30):
         super().__init__(n_nodes=n_nodes, capital_per_person=capital_per_person,
-                         ponzi_capital=ponzi_capital, interest=interest,
-                         interest_calculating_periods=interest_calculating_periods)
+                         ponzi_capital=ponzi_capital)
         self.avg_k = k_avg
         #self.p = self.k_avg / (self.n_nodes - 1) if self.n_nodes > 1 else 0
 

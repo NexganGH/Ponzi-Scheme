@@ -1,14 +1,11 @@
 import matplotlib.pyplot as plt
-import importlib
-import networks.network  # Ensure the submodule is directly importable
 import numpy as np
-from networks import WattsStrogatzNetwork, BaNetwork
-from networks.interest_calculator import InterestCalculator
-from data import Data
+from simulation.parameters_calculator import InterestCalculator
+from simulation.finance_data import FinanceData
 
-data = Data()
+data = FinanceData()
 data.download()
-interest_calculator = InterestCalculator(r_p = lambda t: 0.1, r_r = lambda t: data.interpolated_r_r(t) / (1./12))
+interest_calculator = InterestCalculator(rp= lambda t: 0.1, rr= lambda t: data.interpolated_r_r(t) / (1. / 12))
 
 print(interest_calculator.promised_return_at_time(100, 0, 1))
 
@@ -41,7 +38,7 @@ made_interest = [5000]
 for i in range(1, len(x_vals)):
     #val = made_interest[i-1]
     #made_interest.append(val + val * data.returns_array[i])
-    made_interest.append(interest_calculator.realized_return(made_interest[i - 1], x_vals[i - 1], x_vals[i]))
+    made_interest.append(interest_calculator.ponzi_earnings(made_interest[i - 1], x_vals[i - 1], x_vals[i]))
 
 # Grafico dell'investimento nel tempo (verde)
 ax2.plot(x_vals, made_interest, label="Investment Growth ($400)", color='tab:green')

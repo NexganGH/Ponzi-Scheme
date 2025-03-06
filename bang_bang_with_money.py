@@ -1,19 +1,18 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import solve_ivp
-from scipy.optimize import minimize
-from data import Data
-from pyswarm import pso  # Install with `pip install pyswarm`
-from networks.interest_calculator import InterestCalculator
+from simulation.finance_data import FinanceData
+from simulation.parameters_calculator import InterestCalculator
 from scipy.optimize import differential_evolution
 
 
-data = Data()
+data = FinanceData()
 data.download()
 
-interest_calculator = InterestCalculator(r_p = lambda t: 0.2, r_r = data.interpolated_r_r)#lambda t: data.interpolated_r_r(t))#data.interpolated_r_r)
+interest_calculator = InterestCalculator(rp= lambda t: 0.3, rr= lambda _: 0.0)#lambda t: 2*data.interpolated_r_r(t))#lambda t: data.interpolated_r_r(t))#data.interpolated_r_r)
 interest_calculator.compute_market_positivity(0, 30, 100, np.log(4)/2)
-num_switches = 3  # Example, adjust as needed
+num_switches = 6
+# Example, adjust as needed
 
 #lambda_ = lambda _: 0.03#interest_calculator.lambda_from_rr_func(base=0.2, min=0.05, max=0.2, steepness=30)
 
@@ -22,15 +21,15 @@ num_switches = 3  # Example, adjust as needed
 def mu(t):
     #return np.where(18 <= t <= 20, 0.6, np.where(28<=t<=30, 1, 0.05))
     #return 0.05
-    return interest_calculator.mu_from_rr_func(base=0.035, min=0.03, max=0.8, steepness=150)(t)
+    return 0.1#interest_calculator.mu_from_rr_func(base=0.1, min=0.03, max=0.9, steepness=150)(t)
 
-u_min, u_max = 0, 0.2
+u_min, u_max = 0, 0.02
 def rp(u):
-    return u_max#0.25
+    return 0.25#u_max#0.25
     #return u
 
-def lambda_(u):
-    return u/u_max * 0.05
+def lambda_(u, t):
+    return u/u_max * 0.030#interest_calculator.lambda_from_rr_func(max=0.1, steepness=10)(t)
     #rp_ = rp(u)
     #return 0.05 + rp_/u_max * 0.05#rp / u_max * 0.04
     #np.where(0.03 * rp(t), )
@@ -46,7 +45,7 @@ def system_dynamics(t, y, u):
 
     i, p, S, U, C = y
     r_p = rp(u)
-    lambda_eval = lambda_(u)
+    lambda_eval = lambda_(u, t)
     #print(f'at {t} lambda is {lambda_eval}, mu is {mu(t)}')
     #print(f'pars: {i}, {p}, {S}, {U}, {C}, {N}, {M}, {avg_k}, {interest_calculator.r_p(t)}, {interest_calculator.r_r(t)}')
     mu_eval = mu(t)
@@ -54,7 +53,7 @@ def system_dynamics(t, y, u):
 
     di_dt = i * p * avg_k * lambda_eval - mu_eval * i
     dp_dt = -i * p * avg_k * lambda_eval
-    dS_dt = (S * interest_calculator.r_r(t) + M * N * lambda_eval * p * avg_k * i) - N * mu_eval * i * avg_w
+    dS_dt = (S * interest_calculator.rr(t) + M * N * lambda_eval * p * avg_k * i) - N * mu_eval * i * avg_w
     dU_dt = lambda_eval * avg_k * p * i * M + (r_p - mu_eval) * U
     dC_dt = lambda_eval * avg_k * p * i - mu_eval * C
 
@@ -87,10 +86,10 @@ i0, p0, S0, U0, C0 = 1./N, 1 - 1./N, 5000, 0, 0
 t_span = np.linspace(0, 30, 100)
 #print([interest_calculator.r_r(ti) for ti in t_span])
 
-S_min = 10000
+S_min = 100000
 def lagrangian(y):
     i,p,S,U,C = y
-    return np.where((S > S_min), 0, 1)#-S
+    return -S#np.where((S > S_min), -S, 0)#-S
     #return np.where((S > S_min), 0, 1)
     #return np.where((S > S_min) & (i > i_threshold), 0, 1) - S
 
@@ -104,14 +103,14 @@ def J(switching_times):
     #cost = np.sum(lagrangian(sol.y)) * (t_span[1] - t_span[0])
 
     start_idx, stop_idx = find_range(S)
-    print('computed start, stop ', start_idx, stop_idx)
+    #print('computed start, stop ', start_idx, stop_idx)
     valid_range = sol.y[:, :]
 
     # Compute the cost only in the valid range
     #print('considered array is ', )
     if (len(valid_range) == 0):
         return 0
-    cost = np.sum(lagrangian(valid_range) * (t_span[1] - t_span[0]))
+    cost = S[-1] + np.sum(lagrangian(valid_range) * (t_span[1] - t_span[0]))
     #print('computed cost is ', cost)
     n_iter += 1
     return cost
@@ -142,7 +141,7 @@ def find_range(variable):
 #                options={'maxiter': 500, 'xtol': 1e-2},
 #                method='Powell')
 bounds = [(0, 30)] * num_switches + [(u_min, u_max)] * num_switches
-sol = differential_evolution(J, bounds, strategy='best1bin', tol=1e-3, maxiter=5)
+sol = differential_evolution(J, bounds, strategy='best1bin', tol=1e-3, maxiter=2)
 opt_switching_times = sol.x
 #
 # lb = [0] * len(initial_guess)   # Lower bounds
@@ -166,16 +165,16 @@ plt.figure(figsize=(10, 5))
 ax1 = plt.subplot(1, 2, 1)
 ax1.plot(t_span, S_opt, label='S (Optimised)', color='green')
 ax1.plot(t_span, S_max, label='S (Max Control)', color='green', linestyle='dashed')
-ax1.axhline(S_min, color='red', linestyle='dashed', label='S (minimum target)')
-#ax1.set_ylim(0, 100000)
+#ax1.axhline(S_min, color='red', linestyle='dashed', label='S (minimum target)')
+#ax1.set_ylim(0, 1000000)
 ax1.set_ylabel('S (Money)')
 ax1.legend(loc='upper left')
 
 ax2 = ax1.twinx()
 ax2.plot(t_span, i_opt, label='i (Optimised)', color='blue')
-ax2.plot(t_span, p_opt, label='p (Optimised)', color='red')
+#ax2.plot(t_span, p_opt, label='p (Optimised)', color='red')
 ax2.plot(t_span, i_max, label='i (Max Control)', color='blue', linestyle='dashed')
-ax2.plot(t_span, p_max, label='p (Max Control)', color='red', linestyle='dashed')
+#ax2.plot(t_span, p_max, label='p (Max Control)', color='red', linestyle='dashed')
 ax2.set_ylabel('i, p')
 ax2.legend(loc='upper right')
 plt.title('S, i, p Over Time')

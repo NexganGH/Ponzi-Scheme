@@ -1,9 +1,9 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from networks import Network, WattsStrogatzNetwork, BaNetwork
-from networks.interest_calculator import InterestCalculator
-from data import Data
-import ponzi_simulation
+from simulation.parameters_calculator import InterestCalculator
+from simulation.finance_data import FinanceData
+from simulation import ponzi_simulation
 
 
 def build_legend(plt):
@@ -37,11 +37,11 @@ net1 = WattsStrogatzNetwork.load_json('my_networks/ws1.json')
 net2 = BaNetwork.load_json('my_networks/ba1.json')
 list = {'ba1': net2} # 'ws1': net1,
 
-data = Data()
+data = FinanceData()
 data.download()
 
 
-interest_calculator = InterestCalculator(r_p = lambda t: 0.1, r_r = lambda t: data.interpolated_r_r(t) / (1./12))
+interest_calculator = InterestCalculator(rp= lambda t: 0.1, rr= lambda t: data.interpolated_r_r(t) / (1. / 12))
 # dobbiamo dividere per 1./12 perché i cambiamenti qui sono scritti su base mensile, invece devono essere scritti annualmente.
 
 for (name, net) in list.items():
@@ -85,7 +85,7 @@ for (name, net) in list.items():
     # Calcolo dell'investimento nel tempo
     made_interest = [331.89]
     for i in range(1, len(x_vals)):
-        made_interest.append(interest_calculator.realized_return(made_interest[i - 1], x_vals[i - 1], x_vals[i]))
+        made_interest.append(interest_calculator.ponzi_earnings(made_interest[i - 1], x_vals[i - 1], x_vals[i]))
 
     # Grafico dell'investimento nel tempo (verde)
     ax2.plot(x_vals, made_interest, label="Investment Growth ($400)", color='tab:green')
@@ -119,7 +119,7 @@ for (name, net) in list.items():
     made_interest = [ponzi_simulation.ponzi_capital]
     for i in range(1, len(x_vals)):
         #print('will calculated', made_interest[i-1], x_vals[i-1], x_vals[i])
-        made_interest.append(interest_calculator.realized_return(made_interest[i-1], x_vals[i-1], x_vals[i]))
+        made_interest.append(interest_calculator.ponzi_earnings(made_interest[i - 1], x_vals[i - 1], x_vals[i]))
         #print('calculated ', x_vals[i], made_interest[i])
     print('ending with investors', investor[-1])
     #print(x_vals, made_interest)

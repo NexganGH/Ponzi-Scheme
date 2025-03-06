@@ -2,12 +2,12 @@ import numpy as np
 import scipy.integrate as spi
 import matplotlib.pyplot as plt
 from scipy.integrate import trapezoid
-from data import Data
-from networks.interest_calculator import InterestCalculator
+from simulation.finance_data import FinanceData
+from simulation.parameters_calculator import InterestCalculator
 
-data = Data()
+data = FinanceData()
 data.download()
-interest_calculator = InterestCalculator(r_p=lambda t:0.1, r_r=data.interpolated_r_r)
+interest_calculator = InterestCalculator(rp=lambda t:0.1, rr=data.interpolated_r_r)
 interest_calculator.compute_market_positivity(0, 30, 100)
 #dynamic_mu = #interest_calculator.mu_from_rr_func(min=0.05, base=0.1, max=0.5, steepness=100)
 def dynamic_mu(ti):

@@ -3,8 +3,7 @@ import scipy.integrate as spi
 import matplotlib.pyplot as plt
 from mpmath import sigmoid
 from scipy.integrate import trapezoid
-from data import Data
-from networks.interest_calculator import InterestCalculator
+
 
 #data = Data()
 #data.download()
