@@ -84,6 +84,7 @@ class PonziSimulation:
         #self.investor_numbers = investor_numbers
         #self.potential_numbers = potential_numbers
         #self.deinvestor_numbers = deinvestor_numbers
+
         return SimulationResult(
             investor_numbers=investor_numbers,
             potential_numbers=potential_numbers,
