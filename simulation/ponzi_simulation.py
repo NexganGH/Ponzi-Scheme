@@ -86,9 +86,9 @@ class PonziSimulation:
         #self.deinvestor_numbers = deinvestor_numbers
 
         return SimulationResult(
-            investor_numbers=investor_numbers,
-            potential_numbers=potential_numbers,
-            deinvestor_numbers=deinvestor_numbers,
+            investor_numbers=np.array(investor_numbers)/self.network.n_nodes,
+            potential_numbers=np.array(potential_numbers)/self.network.n_nodes,
+            deinvestor_numbers=np.array(deinvestor_numbers)/self.network.n_nodes,
             capital=ponzi_capital_numbers,
             dt=self.dt)
         #return [ponzi_capital, investor_numbers, potential_numbers, deinvestor_numbers, degrees_money]

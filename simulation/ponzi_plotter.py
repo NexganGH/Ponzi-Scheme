@@ -16,24 +16,26 @@ class PonziPlotter:
     def plot(self, file_name='asd', title='Sistema', show_potential=False,
                        show_investor=False,
                        show_deinvestor=False,
-                       show_capital=False):
+                       show_capital=False,
+                        max_capital=10000):
         """Plots all added simulation results on the same graph."""
         if not self.simulations:
             raise ValueError("No simulations to plot. Add simulations first.")
 
         fig, ax1 = plt.subplots(figsize=(10, 6))
-        ax2 = ax1.twinx()
+        #ax2 = ax1.twinx()
 
         # Lists to hold handles and labels for the legends
         lines_investitori = []
         lines_potentiali = []
         lines_deinvestitori = []
-        lines_money = []
+        lines_capitale = []
         markers = []
 
 
         legend_marker_lines = []
         legend_marker_labels=[]
+        max_cap = max_capital
         for idx, (simulation_result, label) in enumerate(self.simulations):
             i, p, d, capital = (simulation_result.investor_numbers,
                                 simulation_result.potential_numbers,
@@ -63,18 +65,19 @@ class PonziPlotter:
 
             # Secondary y-axis plots (capital evolution) with dashed line
             if show_capital:
-                line_money, = ax2.plot(t, capital, linestyle='dashed', color='red', alpha=0.7, marker=marker, markersize=8,
+                max_cap = max(max_cap, max(capital))
+                line_money, = ax1.plot(t, capital, linestyle='dashed', color='red', alpha=0.7, marker=marker, markersize=8,
                                        markevery=markevery)
-                lines_money.append(line_money)
+                lines_capitale.append(line_money)
 
             legend_marker_lines.append(Line2D([0], [0], color='black', lw=0, marker=marker, markersize=8))
             legend_marker_labels.append(label)
         # Set labels for each axis
         ax1.set_xlabel('t')
-        ax1.set_ylabel('Popolazione')
-        ax2.set_ylabel('Money')
-        ax2.legend(legend_marker_lines, legend_marker_labels, loc='upper right')
-        ax2.set_ylim(bottom=0)
+        ax1.set_ylabel('Popolazione' if not show_capital else 'Capitale')
+        ax1.set_ylim(bottom=0, top=max_cap if show_capital else 1)
+        # ax2.set_ylabel('Capitale')
+        # ax2.set_ylim(bottom=0)
         legend_lines = []
         legend_labels = []
 
@@ -88,9 +91,17 @@ class PonziPlotter:
         if len(lines_deinvestitori) > 0:
             legend_lines.append(Line2D([0], [0], color='gray', lw=2, label=f'Deinvestitori'))
             legend_labels.append('Deinvestitori')
+        if len(lines_capitale) > 0:
+            legend_lines.append(Line2D([0], [0], color='red', lw=2, label=f'Capitale'))
+            legend_labels.append('Capitale')
 
-        ax1.legend(legend_lines, legend_labels, loc='upper left')
+        leg1 = ax1.legend(legend_lines, legend_labels, loc='upper left')
+        leg2 = ax1.legend(legend_marker_lines, legend_marker_labels, loc='upper right')
+        ax1.add_artist(leg1)
+        ax1.add_artist(leg2)
+
+
         ax1.grid()
-        plt.title('Sistema')
+        plt.title(f'{title}')
         plt.savefig(f'imgs/{file_name}.png', bbox_inches='tight')
         plt.show()

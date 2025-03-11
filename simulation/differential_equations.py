@@ -26,7 +26,7 @@ class DifferentialEquations:
         lambda__ = self.lambda_(t)
         mu_ = self.mu(t)
 
-        di_dt = lambda__ * p * self.avg_k * i - mu_ * i
+        di_dt = lambda__ * p * self.avg_k * i  - mu_ * i
         dp_dt = -lambda__ * p * self.avg_k * i
         dd_dt = mu_ * i
 

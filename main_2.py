@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from networks import Network, WattsStrogatzNetwork, BaNetwork
+from networks import Network, WsNetwork, BaNetwork
 from simulation.parameters_calculator import InterestCalculator
 from simulation.finance_data import FinanceData
 from simulation import ponzi_simulation
@@ -33,7 +33,7 @@ parameters = {
     'capital_per_person': 0
 }
 
-net1 = WattsStrogatzNetwork.load_json('my_networks/ws1.json')
+net1 = WsNetwork.load_json('my_networks/ws1.json')
 net2 = BaNetwork.load_json('my_networks/ba1.json')
 list = {'ba1': net2} # 'ws1': net1,
 

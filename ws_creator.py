@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import importlib
 import networks.network  # Ensure the submodule is directly importable
 import numpy as np
-from networks import WattsStrogatzNetwork
+from networks import WsNetwork
 
 parameters = {
     'k': 10,
@@ -15,7 +15,7 @@ parameters = {
     'interest_calculating_periods':1
 }
 
-net = WattsStrogatzNetwork(
+net = WsNetwork(
     k=parameters['k'],
     p=parameters['p'],
     n_nodes=parameters['n_nodes'],

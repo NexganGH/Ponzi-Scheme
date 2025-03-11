@@ -4,7 +4,7 @@ from .node import Node
 from .node_status import NodeStatus
 
 
-class WattsStrogatzNetwork(Network):
+class WsNetwork(Network):
     def get_model_params(self):
         return {
             'k': self.k,
