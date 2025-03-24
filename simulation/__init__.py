@@ -1,5 +1,5 @@
 from .finance_data import FinanceData
-from .parameters_calculator import InterestCalculator
+from .parameters_calculator import ParameterCalculator
 from .ponzi_simulation import PonziSimulation
 from .ponzi_parameters import PonziParameters
 from .ponzi_plotter import PonziPlotter

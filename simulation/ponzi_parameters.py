@@ -1,4 +1,4 @@
-from simulation import InterestCalculator
+from simulation import ParameterCalculator
 
 
 class PonziParameters:
@@ -16,5 +16,5 @@ class PonziParameters:
         self.mu = mu
         self.rp = rp
         self.rr = rr
-        self.interest_calculator = InterestCalculator(rp=rp, rr=rr)
+        self.interest_calculator = ParameterCalculator(rp=rp, rr=rr)
 

@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from networks import Network, WsNetwork, BaNetwork
-from simulation.parameters_calculator import InterestCalculator
+from simulation.parameters_calculator import ParameterCalculator
 from simulation.finance_data import FinanceData
 from simulation import ponzi_simulation
 
@@ -41,7 +41,7 @@ data = FinanceData()
 data.download()
 
 
-interest_calculator = InterestCalculator(rp= lambda t: 0.1, rr= lambda t: data.interpolated_r_r(t) / (1. / 12))
+interest_calculator = ParameterCalculator(rp= lambda t: 0.1, rr= lambda t: data.market_rr(t) / (1. / 12))
 # dobbiamo dividere per 1./12 perché i cambiamenti qui sono scritti su base mensile, invece devono essere scritti annualmente.
 
 for (name, net) in list.items():

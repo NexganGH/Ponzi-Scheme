@@ -1,11 +1,11 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from simulation.parameters_calculator import InterestCalculator
+from simulation.parameters_calculator import ParameterCalculator
 from simulation.finance_data import FinanceData
 
 data = FinanceData()
 data.download()
-interest_calculator = InterestCalculator(rp= lambda t: 0.1, rr= lambda t: data.interpolated_r_r(t) / (1. / 12))
+interest_calculator = ParameterCalculator(rp= lambda t: 0.1, rr= lambda t: data.market_rr(t) / (1. / 12))
 
 print(interest_calculator.promised_return_at_time(100, 0, 1))
 
@@ -18,7 +18,7 @@ fig, ax1 = plt.subplots()
 
 # Grafico del cambio percentuale (ritorni mensili) sull'asse primario (rosso)
 ax1.plot(x_vals, data.returns_array[:len(x_vals)], label="Monthly Returns (%)", color='tab:red')
-ax1.plot(x_vals, [data.interpolated_r_r(x) for x in x_vals], color='orange')
+ax1.plot(x_vals, [data.market_rr(x) for x in x_vals], color='orange')
 #ax1.plot(x_vals, [data.interpolated_r_r(x) for x in x_vals], color='black')
 ax1.set_xlabel("Time (Years)")
 ax1.set_ylabel("Monthly Return (%)", color='tab:red')

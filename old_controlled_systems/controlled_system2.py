@@ -3,13 +3,13 @@ import scipy.integrate as spi
 import matplotlib.pyplot as plt
 from scipy.integrate import trapezoid
 from simulation.finance_data import FinanceData
-from simulation.parameters_calculator import InterestCalculator
+from simulation.parameters_calculator import ParameterCalculator
 from scipy.optimize import fsolve
 
 data = FinanceData()
 data.download()
-interest_calculator = InterestCalculator(rp=lambda t:0.1, rr=data.interpolated_r_r)
-interest_calculator.compute_market_positivity(0, 30, 100)
+interest_calculator = ParameterCalculator(rp=lambda t:0.1, rr=data.market_rr)
+interest_calculator.compute_sentiment(0, 30, 100)
 #dynamic_mu = interest_calculator.mu_from_rr_func(max=0.5, steepness=30)
 dynamic_mu = lambda t: 0.2
 # System parameters

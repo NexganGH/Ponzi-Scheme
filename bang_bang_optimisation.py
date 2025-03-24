@@ -3,13 +3,13 @@ import matplotlib.pyplot as plt
 from scipy.integrate import solve_ivp
 from scipy.optimize import minimize
 from simulation.finance_data import FinanceData
-from simulation.parameters_calculator import InterestCalculator
+from simulation.parameters_calculator import ParameterCalculator
 
 data = FinanceData()
 data.download()
 
-interest_calculator = InterestCalculator(rp=lambda _: 0.1, rr=data.interpolated_r_r)
-interest_calculator.compute_market_positivity(0, 30, 200)
+interest_calculator = ParameterCalculator(rp=lambda _: 0.1, rr=data.market_rr)
+interest_calculator.compute_sentiment(0, 30, 200)
 
 
 

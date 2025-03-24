@@ -2,15 +2,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import solve_ivp
 from simulation.finance_data import FinanceData
-from simulation.parameters_calculator import InterestCalculator
+from simulation.parameters_calculator import ParameterCalculator
 from scipy.optimize import differential_evolution
 
 
 data = FinanceData()
 data.download()
 
-interest_calculator = InterestCalculator(rp= lambda t: 0.3, rr= lambda _: 0.0)#lambda t: 2*data.interpolated_r_r(t))#lambda t: data.interpolated_r_r(t))#data.interpolated_r_r)
-interest_calculator.compute_market_positivity(0, 30, 100, np.log(4)/2)
+interest_calculator = ParameterCalculator(rp= lambda t: 0.3, rr= lambda _: 0.0)#lambda t: 2*data.interpolated_r_r(t))#lambda t: data.interpolated_r_r(t))#data.interpolated_r_r)
+interest_calculator.compute_sentiment(0, 30, 100, np.log(4) / 2)
 num_switches = 6
 # Example, adjust as needed
 

@@ -27,7 +27,7 @@ class FinanceData:
         self.returns_dict = dict(zip(self.sp500['Years Since 1990'], self.sp500['Monthly Return']))
 
 
-    def interpolated_r_r(self, t):  # t in years
+    def market_rr(self, t):  # t in years
         keys_array = np.array(list(self.returns_dict.keys()))  # Converte le chiavi in array NumPy
         idx = np.abs(keys_array - t).argmin()  # Trova l'indice della chiave più vicina
         closest_key = keys_array[min(idx + 1, len(keys_array) - 1)]  # Ottieni la chiave effettiva
