@@ -154,7 +154,7 @@ ax1.tick_params(axis='y', labelcolor='b')
 
 # Create a secondary y-axis
 ax2 = ax1.twinx()
-ax2.plot(t, [dynamic_mu(ti) for ti in t], label='μ from Time', color='r')
+ax2.ba_plot(t, [dynamic_mu(ti) for ti in t], label='μ from Time', color='r')
 ax2.set_ylabel("μ (Withdrawal Rate)", color='r')
 ax2.tick_params(axis='y', labelcolor='r')
 

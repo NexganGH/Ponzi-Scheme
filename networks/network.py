@@ -34,6 +34,8 @@ class Network:
     def k_distribution(self):
         return np.array([node.k() for node in self.nodes], dtype=int)
 
+    def number_nodes_k(self, k):
+        return np.sum(self.k_distribution() == k)
     def print_k_info(self):
         k_dist = self.k_distribution()
         return f'Mean: {np.mean(k_dist)}, k^2: {np.mean(np.square(k_dist))}'

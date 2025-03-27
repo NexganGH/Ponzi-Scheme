@@ -79,7 +79,7 @@ class DifferentialEquations:
         ax2 = ax1.twinx()
         #ax2.plot(t, [self._W(ti) for ti in t], label='Withdrawal', color='purple', linestyle='dashed')
         #ax2.plot(t, [av_W(ti) for ti in t], label='Average Withdrawal Value', color='red', linestyle='dashed')
-        ax2.plot(t, self.sol_S, label='Money', color='red', linestyle='dashed')
+        ax2.ba_plot(t, self.sol_S, label='Money', color='red', linestyle='dashed')
         ax2.set_ylabel('Money')
         ax2.legend(loc='upper right')
 

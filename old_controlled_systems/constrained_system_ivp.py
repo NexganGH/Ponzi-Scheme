@@ -78,20 +78,20 @@ u_values = np.where(lambda1_values > 0, u_max, u_min)
 
 # Plot the results
 fig, ax = plt.subplots(3, 1, figsize=(10, 8))  # 3 plots for i, p, u
-ax[0].plot(t_values, i_values, label="i(t)")
+ax[0].ba_plot(t_values, i_values, label="i(t)")
 ax[0].set_xlabel("Time"), ax[0].set_ylabel("i"), ax[0].legend()
-ax[1].plot(t_values, p_values, label="p(t)", color="green")
+ax[1].ba_plot(t_values, p_values, label="p(t)", color="green")
 ax[1].set_xlabel("Time"), ax[1].set_ylabel("p"), ax[1].legend()
-ax[2].plot(t_values, u_values, label="u(t)", color="red")
+ax[2].ba_plot(t_values, u_values, label="u(t)", color="red")
 ax[2].set_xlabel("Time"), ax[2].set_ylabel("u"), ax[2].legend()
 plt.tight_layout()
 plt.show()
 
 # Optionally, plot λ1 and λ2
 fig, ax = plt.subplots(2, 1, figsize=(10, 6))  # 2 plots for lambda1 and lambda2
-ax[0].plot(t_values, lambda1_values, label="λ1(t)", color="purple")
+ax[0].ba_plot(t_values, lambda1_values, label="λ1(t)", color="purple")
 ax[0].set_xlabel("Time"), ax[0].set_ylabel("λ1"), ax[0].legend()
-ax[1].plot(t_values, lambda2_values, label="λ2(t)", color="orange")
+ax[1].ba_plot(t_values, lambda2_values, label="λ2(t)", color="orange")
 ax[1].set_xlabel("Time"), ax[1].set_ylabel("λ2"), ax[1].legend()
 plt.tight_layout()
 plt.show()

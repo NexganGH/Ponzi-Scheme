@@ -92,9 +92,9 @@ S_values = sol_S.y[0]
 
 # Create secondary y-axis
 ax2 = ax1.twinx()
-ax2.plot(t, [W(ti) for ti in t], label='Withdrawal', color='purple', linestyle='dashed')
-ax2.plot(t, [av_W(ti) for ti in t], label='Average Withdrawal Value', color='red', linestyle='dashed')
-ax2.plot(t, S_values, label='Money', color='green', linestyle='dashed')
+ax2.ba_plot(t, [W(ti) for ti in t], label='Withdrawal', color='purple', linestyle='dashed')
+ax2.ba_plot(t, [av_W(ti) for ti in t], label='Average Withdrawal Value', color='red', linestyle='dashed')
+ax2.ba_plot(t, S_values, label='Money', color='green', linestyle='dashed')
 ax2.set_ylabel('Money')
 ax2.legend(loc='upper right')
 

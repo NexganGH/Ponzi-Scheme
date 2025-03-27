@@ -73,14 +73,14 @@ def constraints(z):
 
 fig, axes = plt.subplots(2, 1, figsize=(8, 6))
 ax1, ax2 = axes
-(line1,) = ax1.plot(t_grid, np.zeros_like(t_grid), label="i(t)")
-(line2,) = ax1.plot(t_grid, np.zeros_like(t_grid), label="p(t)")
+(line1,) = ax1.ba_plot(t_grid, np.zeros_like(t_grid), label="i(t)")
+(line2,) = ax1.ba_plot(t_grid, np.zeros_like(t_grid), label="p(t)")
 ax1.legend()
 ax1.set_title("State Variables (i, p)")
 ax1.set_xlabel("t")
 ax1.set_ylabel("Value")
 
-(line3,) = ax2.plot(t_grid, np.zeros_like(t_grid), label="u(t)", color="red")
+(line3,) = ax2.ba_plot(t_grid, np.zeros_like(t_grid), label="u(t)", color="red")
 ax2.legend()
 ax2.set_title("Control Variable u")
 ax2.set_xlabel("t")
@@ -122,19 +122,19 @@ i_opt, p_opt, u_opt, lambda1_opt, lambda2_opt = np.split(solution.x, 5)
 plt.ioff()
 # Plot results
 fig, ax = plt.subplots(3, 1, figsize=(10, 8))  # 3 plots for i, p, u
-ax[0].plot(t_grid, i_opt, label="i(t)")
+ax[0].ba_plot(t_grid, i_opt, label="i(t)")
 ax[0].set_xlabel("Time"), ax[0].set_ylabel("i"), ax[0].legend()
-ax[1].plot(t_grid, p_opt, label="p(t)", color="green")
+ax[1].ba_plot(t_grid, p_opt, label="p(t)", color="green")
 ax[1].set_xlabel("Time"), ax[1].set_ylabel("p"), ax[1].legend()
-ax[2].plot(t_grid, u_opt, label="u(t)", color="red")
+ax[2].ba_plot(t_grid, u_opt, label="u(t)", color="red")
 ax[2].set_xlabel("Time"), ax[2].set_ylabel("u"), ax[2].legend()
 plt.tight_layout()
 plt.show()
 
 fig, ax = plt.subplots(2, 1, figsize=(10, 6))  # 2 plots for lambda1 and lambda2
-ax[0].plot(t_grid, lambda1_opt, label="λ1(t)", color="purple")
+ax[0].ba_plot(t_grid, lambda1_opt, label="λ1(t)", color="purple")
 ax[0].set_xlabel("Time"), ax[0].set_ylabel("λ1"), ax[0].legend()
-ax[1].plot(t_grid, lambda2_opt, label="λ2(t)", color="orange")
+ax[1].ba_plot(t_grid, lambda2_opt, label="λ2(t)", color="orange")
 ax[1].set_xlabel("Time"), ax[1].set_ylabel("λ2"), ax[1].legend()
 plt.tight_layout()
 plt.show(block=True)

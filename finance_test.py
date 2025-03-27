@@ -31,7 +31,7 @@ ax2 = ax1.twinx()
 
 # Grafico del prezzo di chiusura dell'S&P 500 (blu)
 #ax2.plot(x_vals, data.sp500['Close'][:len(x_vals)], label="S&P 500 Close", color='tab:blue', linestyle='dashed')
-ax2.plot(x_vals, [5000] + [interest_calculator.promised_return_at_time(5000, x_vals[0], x_vals[i]) for i in range(1, len(x_vals))], label="someone", color='black', linestyle='dashed')
+ax2.ba_plot(x_vals, [5000] + [interest_calculator.promised_return_at_time(5000, x_vals[0], x_vals[i]) for i in range(1, len(x_vals))], label="someone", color='black', linestyle='dashed')
 
 # Calcolo dell'investimento nel tempo
 made_interest = [5000]
@@ -41,7 +41,7 @@ for i in range(1, len(x_vals)):
     made_interest.append(interest_calculator.ponzi_earnings(made_interest[i - 1], x_vals[i - 1], x_vals[i]))
 
 # Grafico dell'investimento nel tempo (verde)
-ax2.plot(x_vals, made_interest, label="Investment Growth ($400)", color='tab:green')
+ax2.ba_plot(x_vals, made_interest, label="Investment Growth ($400)", color='tab:green')
 
 # Etichette per l'asse secondario
 ax2.set_ylabel("S&P 500 Close Price & Investment Value", color='black')

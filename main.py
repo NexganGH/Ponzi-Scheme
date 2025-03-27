@@ -70,7 +70,7 @@ ax2 = ax1.twinx()
 
 # trasformiamo in anni
 x_vals = np.arange(start=0, stop=len(ponzi_capital)/12., step=1./12)
-ax2.plot(x_vals, np.array(ponzi_capital), label='Capitale di Ponzi (rateo su capitale iniziale)', color='red')
+ax2.ba_plot(x_vals, np.array(ponzi_capital), label='Capitale di Ponzi (rateo su capitale iniziale)', color='red')
 ax1.plot(x_vals, investor, label='Investors')
 ax1.plot(x_vals, potential, label='Potential')
 ax1.plot(x_vals, deinvestor, label='Deinvestors')

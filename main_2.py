@@ -80,7 +80,7 @@ for (name, net) in list.items():
     ax2 = ax1.twinx()
 
     # Grafico del prezzo di chiusura dell'S&P 500 (blu)
-    ax2.plot(x_vals, data.sp500['Close'][:len(x_vals)], label="S&P 500 Close", color='tab:blue', linestyle='dashed')
+    ax2.ba_plot(x_vals, data.sp500['Close'][:len(x_vals)], label="S&P 500 Close", color='tab:blue', linestyle='dashed')
 
     # Calcolo dell'investimento nel tempo
     made_interest = [331.89]
@@ -88,7 +88,7 @@ for (name, net) in list.items():
         made_interest.append(interest_calculator.ponzi_earnings(made_interest[i - 1], x_vals[i - 1], x_vals[i]))
 
     # Grafico dell'investimento nel tempo (verde)
-    ax2.plot(x_vals, made_interest, label="Investment Growth ($400)", color='tab:green')
+    ax2.ba_plot(x_vals, made_interest, label="Investment Growth ($400)", color='tab:green')
 
     # Etichette per l'asse secondario
     ax2.set_ylabel("S&P 500 Close Price & Investment Value", color='black')
@@ -110,7 +110,7 @@ for (name, net) in list.items():
     # trasformiamo in anni
     #x_vals = np.arange(start=0, stop=len(ponzi_capital)/12., step=1./12)
 
-    ax2.plot(x_vals, np.array(ponzi_capital), label='Capitale di Ponzi (rateo su capitale iniziale)', color='red')
+    ax2.ba_plot(x_vals, np.array(ponzi_capital), label='Capitale di Ponzi (rateo su capitale iniziale)', color='red')
     ax1.plot(x_vals, investor, label='Investors')
     ax1.plot(x_vals, potential, label='Potential')
     ax1.plot(x_vals, deinvestor, label='Deinvestors')
@@ -124,7 +124,7 @@ for (name, net) in list.items():
     print('ending with investors', investor[-1])
     #print(x_vals, made_interest)
     #ax2.plot(x_vals, [interest_calculator.realized_return() for i in range(len(x_vals))])
-    ax2.plot(x_vals, made_interest, color='black')
+    ax2.ba_plot(x_vals, made_interest, color='black')
     build_legend(plt)
     plt.savefig(f'imgs/{name}.png')
     plt.show()
