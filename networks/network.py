@@ -35,6 +35,8 @@ class Network:
         return np.array([node.k() for node in self.nodes], dtype=int)
 
     def number_nodes_k(self, k):
+        if k == 0:
+            return len(self.nodes)
         return np.sum(self.k_distribution() == k)
     def print_k_info(self):
         k_dist = self.k_distribution()

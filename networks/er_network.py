@@ -29,7 +29,7 @@ class ErNetwork(Network):
         self.capital_array[0] = self.ponzi_capital
 
         p = self.avg_k / (self.n_nodes - 1) if self.n_nodes > 1 else 0
-        # Connect each pair of nodes with probability p
+
         for i in range(self.n_nodes):
             for j in range(i):
                 if np.random.rand() < p:

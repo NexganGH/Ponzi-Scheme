@@ -21,7 +21,7 @@ class WsNetwork(Network):
         self.p = p  # Probabilità di riconnessione
 
     def build(self):
-        print("Building Watts-Strogatz Small-World Network...")
+        print("Building WS Network...")
         self.nodes = [Node(self.capital_per_person) for _ in range(self.n_nodes)]
         self.capital_array = np.full(self.n_nodes, self.capital_per_person, dtype=float)
 

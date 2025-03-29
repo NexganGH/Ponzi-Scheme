@@ -90,14 +90,14 @@ for k in [0, 3, 6, 10]:
     lab = 'Int. - k={}'.format(k) if k != 0 else "Int. - Totale"
     er_plot.add_simulation(res, label=lab)
 
-er_plot.plot(show_investor=True, show_potential=True)
+er_plot.plot(show_investor=True, show_potential=True, file_name='meanfield/meanfield_exact_er', title='Sol. Esatta su Rete ER')
 er_plot.save_data('data/er_mean_field.csv')
-# Define parameters
+
 ba_results = calculate_i_p_distribution(P_ba, 2, 101)
 ba_plot = PonziPlotter()
-for k in [0, 6, 10, 50]:
+for k in [0, 6, 15, 50]:
     res = ba_results[k]
     lab = 'Int. - k={}'.format(k) if k != 0 else "Int. - Totale"
     ba_plot.add_simulation(res, label=lab)
-ba_plot.plot(show_investor=True, show_potential=True)
+ba_plot.plot(show_investor=True, show_potential=True, file_name='meanfield/meanfield_exact_ba', title='Sol. Esatta su Rete BA')
 ba_plot.save_data('data/ba_mean_field.csv')

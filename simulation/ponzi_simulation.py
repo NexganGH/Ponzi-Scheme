@@ -22,21 +22,21 @@ class PonziSimulation:
         self.interest_calculator = parameters.interest_calculator
         self.M = parameters.M
 
-    def _update_counts(self, investor_numbers, potential_numbers, deinvestor_numbers, degrees_money, time):
-        # Efficiently calculate counts using numpy
-        nodes = self.network.nodes
-
-        statuses = np.array([node.status for node in nodes])
-        degrees = np.array([node.k() for node in nodes])
-
-        investor_numbers.append(np.sum(statuses == NodeStatus.INVESTOR))
-        potential_numbers.append(np.sum(statuses == NodeStatus.POTENTIAL))
-        deinvestor_numbers.append(np.sum(statuses == NodeStatus.DEINVESTOR))
-
-        for d in range(degrees_money.shape[0]):
-            mask = (degrees == d) #(statuses == NodeStatus.INVESTOR) & (degrees == d)
-            if np.any(mask):
-                degrees_money[d, time] = self.network.capital_array[mask].sum() / np.sum(mask)
+    # def _update_counts(self, investor_numbers, potential_numbers, deinvestor_numbers, degrees_money, time):
+    #     # Efficiently calculate counts using numpy
+    #     nodes = self.network.nodes
+    #
+    #     statuses = np.array([node.status for node in nodes])
+    #     degrees = np.array([node.k() for node in nodes])
+    #
+    #     investor_numbers.append(np.sum(statuses == NodeStatus.INVESTOR))
+    #     potential_numbers.append(np.sum(statuses == NodeStatus.POTENTIAL))
+    #     deinvestor_numbers.append(np.sum(statuses == NodeStatus.DEINVESTOR))
+    #
+    #     for d in range(degrees_money.shape[0]):
+    #         mask = (degrees == d) #(statuses == NodeStatus.INVESTOR) & (degrees == d)
+    #         if np.any(mask):
+    #             degrees_money[d, time] = self.network.capital_array[mask].sum() / np.sum(mask)
 
     def simulate_ponzi(self, computed_for_each_k=False):
         print(f'Starting simulation')
@@ -47,24 +47,21 @@ class PonziSimulation:
 
         # Logs for global results (all nodes)
         ponzi_capital_numbers = []
-        investor_numbers, potential_numbers, deinvestor_numbers = [], [], []
         degrees_money = np.zeros((50, self.max_time_units))
 
-        if computed_for_each_k:
-            # Dictionary to store time-series data for each degree, including k=0 (all nodes)
-            investor_per_k = {0: []}  # k=0 represents all nodes
-            potential_per_k = {0: []}
-            deinvestor_per_k = {0: []}
+        # Dictionary to store time-series data for each degree, including k=0 (all nodes)
+        investor_per_k = {0: []}  # k=0 represents all nodes
+        potential_per_k = {0: []}
+        deinvestor_per_k = {0: []}
 
-            # Track all unique degrees appearing in the network
-            all_degrees = {node.k() for node in nodes[1:]}  # Exclude Ponzi node
-            for k in all_degrees:
-                investor_per_k[k] = []
-                potential_per_k[k] = []
-                deinvestor_per_k[k] = []
-            print('investors are ', investor_per_k)
+        # Track all unique degrees appearing in the network
+        all_degrees = {node.k() for node in nodes[1:]}  # Exclude Ponzi node
+        for k in all_degrees:
+            investor_per_k[k] = []
+            potential_per_k[k] = []
+            deinvestor_per_k[k] = []
 
-        self._update_counts(investor_numbers, potential_numbers, deinvestor_numbers, degrees_money, time)
+        #self._update_counts(investor_numbers, potential_numbers, deinvestor_numbers, degrees_money, time)
 
         last_signal, signal_every = 0, 0.05
         while time < self.max_time_units:
@@ -80,63 +77,55 @@ class PonziSimulation:
                 ponzi.capital = new_capital
 
             # Per-degree counts if needed
-            if computed_for_each_k:
-                current_investors_per_k = {k: 0 for k in investor_per_k}
-                current_potentials_per_k = {k: 0 for k in investor_per_k}
-                current_deinvestors_per_k = {k: 0 for k in investor_per_k}
+            current_investors_per_k = {k: 0 for k in investor_per_k}
+            current_potentials_per_k = {k: 0 for k in investor_per_k}
+            current_deinvestors_per_k = {k: 0 for k in investor_per_k}
 
             for i in range(1, len(nodes)):  # Skip the Ponzi node
                 self.evolve_node(i, nodes[i], time)
-                if computed_for_each_k:
-                    k = nodes[i].k()
-                    if nodes[i].status == NodeStatus.INVESTOR:
-                        current_investors_per_k[k] += 1
-                        current_investors_per_k[0] += 1  # Aggregate all nodes
-                    elif nodes[i].status == NodeStatus.POTENTIAL:
-                        current_potentials_per_k[k] += 1
-                        current_potentials_per_k[0] += 1
-                    elif nodes[i].status == NodeStatus.DEINVESTOR:
-                        current_deinvestors_per_k[k] += 1
-                        current_deinvestors_per_k[0] += 1
+                #if computed_for_each_k:
+                k = nodes[i].k()
+                if nodes[i].status == NodeStatus.INVESTOR:
+                    current_investors_per_k[k] += 1
+                    current_investors_per_k[0] += 1  # Aggregate all nodes
+                elif nodes[i].status == NodeStatus.POTENTIAL:
+                    current_potentials_per_k[k] += 1
+                    current_potentials_per_k[0] += 1
+                elif nodes[i].status == NodeStatus.DEINVESTOR:
+                    current_deinvestors_per_k[k] += 1
+                    current_deinvestors_per_k[0] += 1
 
             # Update logs for global results
             ponzi_capital_numbers.append(ponzi.capital)
-            self._update_counts(investor_numbers, potential_numbers, deinvestor_numbers, degrees_money, time)
+           # self._update_counts(investor_numbers, potential_numbers, deinvestor_numbers, degrees_money, time)
 
-            if computed_for_each_k:
-                for k in investor_per_k:
-                    # Normalize by number of nodes with degree k
-                    n_nodes_k = self.network.number_nodes_k(k)
-                    if n_nodes_k > 0:
-                        investor_per_k[k].append(current_investors_per_k[k] / n_nodes_k)
-                        potential_per_k[k].append(current_potentials_per_k[k] / n_nodes_k)
-                        deinvestor_per_k[k].append(current_deinvestors_per_k[k] / n_nodes_k)
-                    else:
-                        investor_per_k[k].append(0)
-                        potential_per_k[k].append(0)
-                        deinvestor_per_k[k].append(0)
+            #if computed_for_each_k:
+            for k in investor_per_k:
+                # Normalize by number of nodes with degree k
+                n_nodes_k = self.network.number_nodes_k(k)
+                if n_nodes_k > 0:
+                    investor_per_k[k].append(current_investors_per_k[k] / n_nodes_k)
+                    potential_per_k[k].append(current_potentials_per_k[k] / n_nodes_k)
+                    deinvestor_per_k[k].append(current_deinvestors_per_k[k] / n_nodes_k)
+                else:
+                    investor_per_k[k].append(0)
+                    potential_per_k[k].append(0)
+                    deinvestor_per_k[k].append(0)
 
             time += 1
+        results = {}
+        for k in investor_per_k:
+            results[k] = SimulationResult(
+                investor_numbers=np.array(investor_per_k[k]),
+                potential_numbers=np.array(potential_per_k[k]),
+                deinvestor_numbers=np.array(deinvestor_per_k[k]),
+                capital=ponzi_capital_numbers,
+                dt=self.dt
+            )
 
-        if computed_for_each_k:
-            results = {}
-            for k in investor_per_k:
-                results[k] = SimulationResult(
-                    investor_numbers=np.array(investor_per_k[k]),
-                    potential_numbers=np.array(potential_per_k[k]),
-                    deinvestor_numbers=np.array(deinvestor_per_k[k]),
-                    capital=ponzi_capital_numbers,
-                    dt=self.dt
-                )
-            return results  # Dictionary of SimulationResult per k, with k=0 representing all nodes
-
-        return SimulationResult(
-            investor_numbers=np.array(investor_numbers) / self.network.n_nodes,
-            potential_numbers=np.array(potential_numbers) / self.network.n_nodes,
-            deinvestor_numbers=np.array(deinvestor_numbers) / self.network.n_nodes,
-            capital=ponzi_capital_numbers,
-            dt=self.dt
-        )
+        if not computed_for_each_k:
+            return results[0]  # Dictionary of SimulationResult per k, with k=0 representing all nodes
+        return results
 
     def evolve_node(self, i: int, node: Node, time: float):
             ponzi = self.network.ponzi_node()

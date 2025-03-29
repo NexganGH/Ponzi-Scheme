@@ -4,7 +4,7 @@ from matplotlib.lines import Line2D
 from typing import Callable
 import pandas as pd
 from .simulation_result import SimulationResult
-font_size = 15
+font_size = 17
 
 class PonziPlotter:
     def __init__(self):
@@ -105,6 +105,7 @@ class PonziPlotter:
         if custom_func is not None:
             custom_func(ax1)
         plt.title(f'{title}', fontsize=font_size + 2)
+        plt.tight_layout()
         plt.savefig(f'imgs/{file_name}.png', bbox_inches='tight')
         plt.show()
 
