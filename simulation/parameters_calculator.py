@@ -66,7 +66,6 @@ class ParameterCalculator:
    # def lambda_from_rp(self, ):
 
     def _mu_from_sentiment(self, sent, min=0.05, base=0.1, max=0.8, steepness=5):
-
         c = -1/steepness * np.log((max-base)/(base-min))
         return min + (max-min)/(1+np.exp(steepness*(sent - c)))
     def extra_lambda_from_rp(self, rp, min_rp=0., base_rp=0.08, max_rp=0.25, min_lambda=0., max_lambda=0.5):
