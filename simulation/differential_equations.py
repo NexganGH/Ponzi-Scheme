@@ -6,7 +6,6 @@ from . import PonziParameters, SimulationResult
 
 class DifferentialEquations:
 
-# av_k = 5, N = 1000
     def __init__(self, N, ponzi_parameters:PonziParameters, avg_k):
         self.d, self.i, self.p = None, None, None
         self.sol_S = None
@@ -21,7 +20,7 @@ class DifferentialEquations:
         self.starting_capital=ponzi_parameters.starting_capital
 
     def system(self, t, y):
-        i, p, d, S, U, C = y
+        i, p, d, S, U = y
 
         lambda__ = self.lambda_(t)
         mu_ = self.mu(t)
@@ -30,15 +29,14 @@ class DifferentialEquations:
         dp_dt = -lambda__ * p * self.avg_k * i
         dd_dt = mu_ * i
 
-        avg_w = U / C if C != 0 else 0
+        avg_w = U / i if i != 0 else 0
         dS_dt = ((S * self.rr(t)
                  + self.M * self.N * self.lambda_(t) * p * self.avg_k * i)
                  - self.N * self.mu(t) * i * avg_w)
         dU_dt = lambda__ * self.avg_k * p * i * self.M + (self.rp(t) - mu_) * U
-        dC_dt = lambda__ * self.avg_k * p * i - mu_ * C
 
 
-        return [di_dt, dp_dt, dd_dt, dS_dt, dU_dt, dC_dt]
+        return [di_dt, dp_dt, dd_dt, dS_dt, dU_dt]
 
 
 
@@ -46,7 +44,7 @@ class DifferentialEquations:
         self.t_span = (t_start, t_end)
         self.t_eval = np.linspace(t_start, t_end, intervals)
 
-        sol = solve_ivp(self.system, self.t_span, [1 / self.N, 1 - 1 / self.N, 0, self.starting_capital, 0, 0], t_eval=self.t_eval, rtol=1e-8, atol=1e-10, max_step=0.01)
+        sol = solve_ivp(self.system, self.t_span, [1 / self.N, 1 - 1 / self.N, 0, self.starting_capital, 0], t_eval=self.t_eval, rtol=1e-8, atol=1e-10, max_step=0.01)
         self.t = sol.t
         i_val = sol.y[0]
         p_val = sol.y[1]
@@ -60,6 +58,7 @@ class DifferentialEquations:
         return SimulationResult(investor_numbers = i_val, deinvestor_numbers=d_val, potential_numbers=p_val, capital=self.sol_S, dt=self.t_eval[1]-self.t_eval[0])
 
 
+# Deprecata, usa PonziPlotter adesso
     def graph(self, name):
         fig, ax1 = plt.subplots(figsize=(10, 6))
 

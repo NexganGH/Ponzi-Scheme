@@ -33,8 +33,8 @@ parameters = {
     'capital_per_person': 0
 }
 
-net1 = WsNetwork.load_json('my_networks/ws1.json')
-net2 = BaNetwork.load_json('my_networks/ba1.json')
+net1 = WsNetwork.load_json('../my_networks/ws1.json')
+net2 = BaNetwork.load_json('../my_networks/ba1.json')
 list = {'ba1': net2} # 'ws1': net1,
 
 data = FinanceData()

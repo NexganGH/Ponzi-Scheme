@@ -11,15 +11,10 @@ class Network:
     def __init__(self, n_nodes, capital_per_person=100, ponzi_capital=100):
         self.ponzi_capital = ponzi_capital
         self.capital_per_person = capital_per_person
-        #self.m0 = m0
-        #self.m = m
         self.n_nodes = n_nodes
         self.nodes = []
         self.current_size = 0
         self.capital_array = None  # Numpy array for fast capital tracking
-
-    #def set_parameters(self, parameters):
-  #      self.interest_calculating_periods = parameters['interest_calculating_periods']
 
     @abstractmethod
     def build(self):
@@ -85,13 +80,11 @@ class Network:
         with open(filename, "r") as f:
             data = json.load(f)
 
-        # Creiamo il network con i parametri salvati
         network = Network(**data["params"])
         network.nodes = [Node(node_data["capital"]) for node_data in data["nodes"]]
 
         network.capital_array = np.full(network.n_nodes, network.capital_per_person, dtype=float)
 
-        # Ripristiniamo gli stati e le connessioni
         for i, node_data in enumerate(data["nodes"]):
             network.nodes[i].status = NodeStatus[node_data["status"]]  # Convertiamo da stringa a enum
             network.nodes[i].connections = [network.nodes[j] for j in node_data["connections"]]

@@ -23,7 +23,6 @@ class ErNetwork(Network):
         self.nodes = [Node(self.capital_per_person) for _ in range(self.n_nodes)]
         self.capital_array = np.full(self.n_nodes, self.capital_per_person, dtype=float)
 
-        # Set Ponzi node specifics
         self.nodes[0].capital = self.ponzi_capital
         self.nodes[0].status = NodeStatus.INVESTOR
         self.capital_array[0] = self.ponzi_capital

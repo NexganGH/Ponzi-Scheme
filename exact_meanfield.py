@@ -6,51 +6,53 @@ from simulation import SimulationResult, PonziPlotter
 
 
 def calculate_i_p_distribution(P, k_min, k_max):
-    #global m, lambda_, mu, avg_k, theta, i_integral_k, ponzi_results, k, p_k_results
-    m = 5.5 # Example value for m
-    lambda_ = 0.2  # Infection rate
-    mu = 0.1  # Recovery rate
+    m = 5.5
+    lambda_ = 0.2
+    mu = 0.1
     avg_k = 6
 
-    def theta(z):
+    def theta(z): # Formula di theta calcolata prima
         sum_over_k = 0
         for k in range(k_min, k_max):
             sum_over_k += k / avg_k * P(k) * np.exp(-k * z / m)
         return 1 - 1 * sum_over_k - mu / (lambda_ * m) * z
 
-    # Define function F(z) based on the given parameters
-    def F(z):
+
+    def F(z): # Denominatore della funzione da integrare per trovare z.
         return lambda_ * m * theta(z)
 
-    # Define function for potential investors p_k
+    # Potenziali investitori p_k
     def p_k(k, z):
         return np.exp(-z * k / m)
 
     def i_integral_k(k, tau, z_func):
         return np.exp(mu * tau) * k * lambda_ * np.exp(-k * z_func(tau) / m) * theta(z_func(tau))
 
+    # Investitori i_k
     def i_k(k, z_func, t_values):
         val = spi.cumulative_trapezoid(i_integral_k(k, t_values, z_func), t_values, initial=0)
-        # print(i_k(k, val, t_values))
         return np.exp(-mu * t_values) * val
 
     z_values = np.linspace(0., 9, 100000)  # Range of z values
     t_values = spi.cumulative_trapezoid(1 / F(z_values), z_values, initial=0)  # Ensure t(0) = 0
     z_of_t = spi_interp.interp1d(t_values, z_values, kind='cubic', fill_value='extrapolate')
     ponzi_results = {}
-    # Compute p_k over time for each k
     t_plot = np.linspace(0, 30, 100000)
+
+    # Calcola p_k
     p_k_results = {k: p_k(k, z_of_t(t_plot)) for k in range(k_min, k_max)}
-    # Compute total p over time
     p_total_plot = 0
     for (k, p_k) in p_k_results.items():  # Summing over k from 2 to 100
         p_total_plot += P(k) * p_k
-    # Compute i_k over time for each k
+
+
+    # Calcola i_k
     i_k_results = {k: i_k(k, z_of_t, t_plot) for k in range(k_min, k_max)}
     i_total_plot = 0
     for (k, i_k) in i_k_results.items():
         i_total_plot += P(k) * i_k
     # Create PonziResults for each k
+
     for k in p_k_results:
         ponzi_results[k] = SimulationResult(
             investor_numbers=np.array(i_k_results[k]),  # p_k represents investors for each k
@@ -81,8 +83,9 @@ def P_ba(k):
     k_max = 100
     norm_constant = sum(k ** (-gamma) for k in range(k_min, k_max + 1))
 
-    # Calculate the probability for each degree k
+
     return (k ** (-gamma)) / norm_constant if k >= k_min else 0
+
 er_results = calculate_i_p_distribution(P_er, 0, 20)
 er_plot = PonziPlotter()
 for k in [0, 3, 6, 10]:

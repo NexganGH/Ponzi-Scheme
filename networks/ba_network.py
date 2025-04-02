@@ -26,19 +26,18 @@ class BaNetwork(Network):
         self.nodes = [Node(self.capital_per_person) for _ in range(self.m0)]
         self.capital_array = np.full(self.n_nodes, self.capital_per_person, dtype=float)
 
-        # Fully connect the initial m0 nodes
+        # Connetti i primi nodi
         for i in range(self.m0):
             for j in range(i):
                 self.nodes[i].connect(self.nodes[j])
 
-        # Set Ponzi node specifics
+
         self.nodes[0].capital = self.ponzi_capital
         self.nodes[0].status = NodeStatus.INVESTOR
         self.nodes[0].degree = 0
         self.capital_array[0] = self.ponzi_capital
 
-        # Add remaining nodes based on preferential attachment
-
+        # Attaccamento preferenziale
         last_signal, signal_every = 0, 0.05
         while len(self.nodes) < self.n_nodes:
             perc = len(self.nodes) / self.n_nodes

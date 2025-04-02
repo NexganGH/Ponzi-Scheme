@@ -22,46 +22,25 @@ class PonziSimulation:
         self.interest_calculator = parameters.interest_calculator
         self.M = parameters.M
 
-    # def _update_counts(self, investor_numbers, potential_numbers, deinvestor_numbers, degrees_money, time):
-    #     # Efficiently calculate counts using numpy
-    #     nodes = self.network.nodes
-    #
-    #     statuses = np.array([node.status for node in nodes])
-    #     degrees = np.array([node.k() for node in nodes])
-    #
-    #     investor_numbers.append(np.sum(statuses == NodeStatus.INVESTOR))
-    #     potential_numbers.append(np.sum(statuses == NodeStatus.POTENTIAL))
-    #     deinvestor_numbers.append(np.sum(statuses == NodeStatus.DEINVESTOR))
-    #
-    #     for d in range(degrees_money.shape[0]):
-    #         mask = (degrees == d) #(statuses == NodeStatus.INVESTOR) & (degrees == d)
-    #         if np.any(mask):
-    #             degrees_money[d, time] = self.network.capital_array[mask].sum() / np.sum(mask)
-
     def simulate_ponzi(self, computed_for_each_k=False):
+        """"Avvia la simulazione"""
         print(f'Starting simulation')
         time = 0
         ponzi = self.network.ponzi_node()
         nodes = self.network.nodes
         ponzi.capital = self.parameters.starting_capital
 
-        # Logs for global results (all nodes)
         ponzi_capital_numbers = []
-        degrees_money = np.zeros((50, self.max_time_units))
-
-        # Dictionary to store time-series data for each degree, including k=0 (all nodes)
-        investor_per_k = {0: []}  # k=0 represents all nodes
+        investor_per_k = {0: []}
         potential_per_k = {0: []}
         deinvestor_per_k = {0: []}
 
-        # Track all unique degrees appearing in the network
-        all_degrees = {node.k() for node in nodes[1:]}  # Exclude Ponzi node
+        # Aggiungi tutti i gradi del network
+        all_degrees = {node.k() for node in nodes[1:]}
         for k in all_degrees:
             investor_per_k[k] = []
             potential_per_k[k] = []
             deinvestor_per_k[k] = []
-
-        #self._update_counts(investor_numbers, potential_numbers, deinvestor_numbers, degrees_money, time)
 
         last_signal, signal_every = 0, 0.05
         while time < self.max_time_units:
@@ -70,24 +49,26 @@ class PonziSimulation:
                 print(f'{perc * 100:.2f}% complete')
                 last_signal = perc
 
+            # STEP 1: Calcola l'interesse accumulato
             if time > 0:
                 new_capital = self.interest_calculator.ponzi_earnings(
                     ponzi.capital, (time - 1) * self.dt, time * self.dt
                 )
                 ponzi.capital = new_capital
 
-            # Per-degree counts if needed
+            # Salva gli investiori correnti per grado
             current_investors_per_k = {k: 0 for k in investor_per_k}
             current_potentials_per_k = {k: 0 for k in investor_per_k}
             current_deinvestors_per_k = {k: 0 for k in investor_per_k}
 
-            for i in range(1, len(nodes)):  # Skip the Ponzi node
+            # STEP 2: Evolve e salva i nodi.
+            for i in range(1, len(nodes)):
+
                 self.evolve_node(i, nodes[i], time)
-                #if computed_for_each_k:
                 k = nodes[i].k()
                 if nodes[i].status == NodeStatus.INVESTOR:
                     current_investors_per_k[k] += 1
-                    current_investors_per_k[0] += 1  # Aggregate all nodes
+                    current_investors_per_k[0] += 1
                 elif nodes[i].status == NodeStatus.POTENTIAL:
                     current_potentials_per_k[k] += 1
                     current_potentials_per_k[0] += 1
@@ -95,13 +76,9 @@ class PonziSimulation:
                     current_deinvestors_per_k[k] += 1
                     current_deinvestors_per_k[0] += 1
 
-            # Update logs for global results
             ponzi_capital_numbers.append(ponzi.capital)
-           # self._update_counts(investor_numbers, potential_numbers, deinvestor_numbers, degrees_money, time)
 
-            #if computed_for_each_k:
             for k in investor_per_k:
-                # Normalize by number of nodes with degree k
                 n_nodes_k = self.network.number_nodes_k(k)
                 if n_nodes_k > 0:
                     investor_per_k[k].append(current_investors_per_k[k] / n_nodes_k)
@@ -130,16 +107,17 @@ class PonziSimulation:
     def evolve_node(self, i: int, node: Node, time: float):
             ponzi = self.network.ponzi_node()
 
+            # Se è investitore, può uscire dallo schema con una prob. mu * Delta t
             if node.status == NodeStatus.INVESTOR:
-
                 if np.random.binomial(1, self.mu(time*self.dt)*self.dt):  # Node exits
                     exit_capital = self.interest_calculator.promised_return_at_time(self.M,
                                                                                     node.time_joined * self.dt,
                                                                                time * self.dt)  # self.capital_per_person
-                    #print('Entered at ', node.time_joined, ', exited at', time, ' with money ', exit_capital)
                     self.network.capital_array[i] += exit_capital
                     ponzi.capital -= exit_capital
                     node.status = NodeStatus.DEINVESTOR
+            # Se è potenziale investitore, iteriamo sulle possibili connessioni:
+            # per ognuna diventa investitore con una prob lambda * Delta t
             elif node.status == NodeStatus.POTENTIAL:
                 for connection in node.connections:
                     if connection.status == NodeStatus.INVESTOR and np.random.binomial(1, self.lambda_(time*self.dt)*self.dt):
@@ -148,5 +126,3 @@ class PonziSimulation:
                         ponzi.capital += invest_capital
                         node.make_investor(connection, time)
                         break # Altrimenti potrebbe diventare investitore due volte.
-
-

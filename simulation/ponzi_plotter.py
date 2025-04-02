@@ -12,14 +12,14 @@ class PonziPlotter:
         self.markers = ['o', '*', '>', '^', 'v', '<', 'D', 'p', 's', 'h']  # Different markers
 
     def add_simulation(self, simulation_result, label: str = None, custom_color: str = None):
-        """Adds a simulation result to the plotter."""
+        """Aggiungi il risultato della simulazione al plot."""
         self.simulations.append((simulation_result, label, custom_color))
         return self
 
     def plot(self, file_name='asd', title='Sistema', show_potential=False,
              show_investor=False, show_deinvestor=False, show_capital=False,
              max_capital=10000, custom_func: Callable[[plt.axes], None] = None, offset=0):
-        """Plots all added simulation results on the same graph."""
+        """Plotta tutti i grafici aggiunti."""
         if not self.simulations:
             raise ValueError("No simulations to plot. Add simulations first.")
 
